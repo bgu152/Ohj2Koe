@@ -22,7 +22,7 @@ public class Vene {
 	public void setLeveys(double leveys) {
 		this.leveys = leveys;
 	}
-	public double getHinta() {
+	public int getHinta() {
 		return hinta;
 	}
 	public void setHinta(int hinta) {

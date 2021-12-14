@@ -31,6 +31,7 @@ public class Dao {
 	     return con;
 	}
 	public ArrayList<Vene> listaaKaikki(){
+		System.out.println("Dao listaa kaikki");
 		ArrayList<Vene> veneet = new ArrayList<Vene>();
 		sql = "SELECT * FROM veneet";       
 		try {
@@ -88,5 +89,86 @@ public class Dao {
 			e.printStackTrace();
 		}		
 		return veneet;
+	}
+	public boolean lisaaVene(Vene vene){
+		boolean paluuArvo=true;
+		sql="INSERT INTO veneet ('nimi', 'merkkimalli', 'pituus', 'leveys', 'hinta') VALUES(?,?,?,?, ?)";						  
+		try {
+			con = yhdista();
+			stmtPrep=con.prepareStatement(sql); 
+			stmtPrep.setString(1, vene.getNimi());
+			stmtPrep.setString(2, vene.getMerkkimalli());
+			stmtPrep.setDouble(3, vene.getPituus());
+			stmtPrep.setDouble(4, vene.getLeveys());
+			stmtPrep.setInt(5, vene.getHinta());
+			stmtPrep.executeUpdate();
+	        con.close();
+		} catch (Exception e) {				
+			e.printStackTrace();
+			paluuArvo=false;
+		}				
+		return paluuArvo;
+	}
+	public boolean poistaVene(int tunnus){ //Oikeassa elämässä tiedot ensisijaisesti merkitään poistetuksi.
+		boolean paluuArvo=true;
+		sql="DELETE FROM veneet WHERE tunnus=?";						  
+		try {
+			con = yhdista();
+			stmtPrep=con.prepareStatement(sql); 
+			stmtPrep.setInt(1, tunnus);			
+			stmtPrep.executeUpdate();
+	        con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			paluuArvo=false;
+		}				
+		return paluuArvo;
+	}
+	public Vene etsiVene(int tunnus) {
+		Vene vene = null;
+		sql = "SELECT * FROM veneet WHERE tunnus=?";       
+		try {
+			con=yhdista();
+			if(con!=null){ 
+				stmtPrep = con.prepareStatement(sql); 
+				stmtPrep.setInt(1, tunnus);
+        		rs = stmtPrep.executeQuery();  
+        		if(rs.isBeforeFirst()){ //jos kysely tuotti dataa, eli tunnus on käytössä
+        			rs.next();
+        			vene = new Vene();        			
+        			vene.setTunnus(rs.getInt(1));
+        			vene.setNimi(rs.getString(2));
+        			vene.setMerkkimalli(rs.getString(3));
+        			vene.setPituus(rs.getDouble(4));	
+        			vene.setLeveys(rs.getDouble(5));  
+        			vene.setHinta(rs.getInt(6)); 
+				}        		
+			}	
+			con.close();  
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return vene;		
+	}
+	public boolean muutaVene(Vene vene, int tunnus){
+		System.out.println("Inside muutaVene");
+		boolean paluuArvo=true;
+		sql="UPDATE veneet SET nimi=?, merkkimalli=?, pituus=?, leveys=?, hinta = ? WHERE tunnus=?";						  
+		try {
+			con = yhdista();
+			stmtPrep=con.prepareStatement(sql); 
+			stmtPrep.setString(1, vene.getNimi());
+			stmtPrep.setString(2, vene.getMerkkimalli());
+			stmtPrep.setDouble(3, vene.getPituus());
+			stmtPrep.setDouble(4, vene.getLeveys());
+			stmtPrep.setInt(5, vene.getHinta());
+			stmtPrep.setInt(6, tunnus);
+			stmtPrep.executeUpdate();
+	        con.close();
+		} catch (Exception e) {				
+			e.printStackTrace();
+			paluuArvo=false;
+		}				
+		return paluuArvo;
 	}
 }
