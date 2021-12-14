@@ -9,7 +9,12 @@
 </head>
 <body>
 <table id="listaus">
-	<thead>				
+	<thead>
+			<tr>
+			<th class="oikealle">Hakusana:</th>
+			<th colspan="2"><input type="text" id="hakusana"></th>
+			<th><input type="button" value="hae" id="hakunappi"></th>
+		</tr>			
 		<tr>
 			<th>Tunnus</th>
 			<th>Nimi</th>
@@ -24,7 +29,22 @@
 </table>
 <script>
 $(document).ready(function(){
-	$.ajax({url:"veneet", type:"GET", dataType:"json", success:function(result){//Funktio palauttaa tiedot json-objektina		
+	
+	haeVeneet();
+	$("#hakunappi").click(function(){		
+		haeVeneet();
+	});
+	$(document.body).on("keydown", function(event){
+		  if(event.which==13){ //Enteri‰ painettu, ajetaan haku
+			  haeVeneet();
+		  }
+	});
+	$("#hakusana").focus();//vied‰‰n kursori hakusana-kentt‰‰n sivun latauksen yhteydess‰
+});	
+
+function haeVeneet(){
+	$("#listaus tbody").empty();
+	$.ajax({url:"veneet/" +$("#hakusana").val(), type:"GET", dataType:"json", success:function(result){//Funktio palauttaa tiedot json-objektina		
 		$.each(result.veneet, function(i, field){  
         	var htmlStr;
         	htmlStr+="<tr>";
@@ -38,7 +58,7 @@ $(document).ready(function(){
         	$("#listaus tbody").append(htmlStr);
         });	
     }});
-});	
+}
 
 </script>
 </body>

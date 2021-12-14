@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import model.dao.Dao;
 import model.Vene;
 
-@WebServlet("/veneet")
+@WebServlet("/veneet/*")
 public class Veneet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -28,13 +28,16 @@ public class Veneet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Veneet.doGet()");
+		String pathInfo = request.getPathInfo(); //haetaan kutsun polkutiedot, esim. /flipper	
+		System.out.println("polku: "+pathInfo);
+		String hakusana = pathInfo.replace("/", "");
 		Dao dao = new Dao();
-		  ArrayList<Vene> veneet = dao.listaaKaikki();
-		  System.out.println(veneet);
-		  String strJSON = new JSONObject().put("veneet", veneet).toString();
-			response.setContentType("application/json");
-			PrintWriter out = response.getWriter();
-			out.println(strJSON);	
+		ArrayList<Vene> veneet = dao.listaaKaikki(hakusana);
+		System.out.println(veneet);
+		String strJSON = new JSONObject().put("veneet", veneet).toString();
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		out.println(strJSON);	
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

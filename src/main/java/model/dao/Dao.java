@@ -58,4 +58,35 @@ public class Dao {
 		}		
 		return veneet;
 	}
+	
+	public ArrayList<Vene> listaaKaikki(String hakusana){
+		ArrayList<Vene> veneet = new ArrayList<Vene>();
+		sql = "SELECT * FROM veneet WHERE nimi LIKE ? or merkkimalli LIKE ?";      
+		try {
+			con=yhdista();
+			if(con!=null){ //jos yhteys onnistui
+				stmtPrep = con.prepareStatement(sql);
+				stmtPrep.setString(1, "%" + hakusana + "%");
+				stmtPrep.setString(2, "%" + hakusana + "%");   
+        		rs = stmtPrep.executeQuery();   
+				if(rs!=null){ //jos kysely onnistui
+					//con.close();					
+					while(rs.next()){
+						Vene vene = new Vene();
+						vene.setTunnus(rs.getInt(1));
+						vene.setNimi(rs.getString(2));
+						vene.setMerkkimalli(rs.getString(3));	
+						vene.setPituus(rs.getDouble(4));
+						vene.setLeveys(rs.getDouble(5));
+						vene.setHinta(rs.getInt(6));
+						veneet.add(vene);
+					}					
+				}				
+			}	
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return veneet;
+	}
 }
